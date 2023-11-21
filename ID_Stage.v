@@ -51,8 +51,6 @@ module ID_Stage (
 	output Two_src;
 	output[31:0] PC;
 
-
-
 	wire [3:0] EXE_CMD_temp;
 	reg [3:0] src2_temp;
 	wire mem_read, mem_write, wb_enable, B_temp, S_temp, check; 

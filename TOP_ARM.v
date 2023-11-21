@@ -319,11 +319,11 @@ module TOP_ARM
 	wire[31:0] id_pc_stage, id_pc_stage_reg;
 	wire[31:0] exe_pc_stage, exe_pc_stage_reg;
 	wire[31:0] mem_pc_stage, mem_pc_stage_reg;
-	wire[31:0] wb_pc_stage, wb_pc_stage_reg;
+	wire[31:0] wb_pc_stage;
 
 	wire [31:0] Val_Rn, Val_Rm, id_instruction_stage;
 	wire WB_EN, MEM_R_EN, MEM_W_EN, B_out, S_out, imm, Two_src;
-	wire [3:0] Dest_wb, SR, EXE_CMD, Dest, src1, src2;
+	wire [3:0] SR, EXE_CMD, Dest, src1, src2;
 	wire [11:0] Shift_operand;
 	wire [23:0] Signed_imm_24;
 
@@ -340,7 +340,12 @@ module TOP_ARM
 
 	wire carry_out;
 
-	reg [31:0] Br_Addr = 32'b0;
+	wire [31:0] ALU_result, Br_Addr, Val_Rm_exe_out;
+	wire [3:0] status_exe, Dest_exe_out;
+	wire WB_EN_exe_out, MEM_W_EN_exe_out, MEM_R_EN_exe_out, WB_EN_exe_reg_out, MEM_W_EN_exe_reg_out, MEM_R_EN_exe_reg_out;
+	wire [31:0] ALU_result_exe_reg_out, Val_Rm_exe_reg_out;
+	wire [3:0] Dest_exe_reg_out;
+	wire [31:0] Data_mem_out;
 
 	wire [3:0] Dest_wb_out;
 	wire WB_EN_wb_out;
@@ -438,19 +443,54 @@ module TOP_ARM
 		.carry_out(carry_out)		  
 	);
 
-	EXE_Stage exe_stage (
-		clk, 
-		rst, 
-		id_pc_stage_reg,
-		exe_pc_stage
+	EXE_Stage exe_stage(
+		.clk(clk), 
+		.rst(rst), 
+		.EXE_CMD(EXE_CMD_out),
+		.WB_EN(WB_EN_reg_id_out),
+		.MEM_R_EN(MEM_R_EN_reg_id_out),
+		.MEM_W_EN(MEM_W_EN_reg_id_out),
+		.PC_in(id_pc_stage_reg),
+		.Val_Rn(val_Rn_id_out),
+		.Val_Rm(val_Rm_id_out),
+		.imm(imm_id_out),
+		.Shift_operand(Shift_operand_out),
+		.Signed_imm_24(Signed_imm_24_out),
+		.C(carry_out),
+		.Dest(Dest_out),
+		.ALU_result(ALU_result),
+		.Br_addr(Br_Addr),
+		.Val_Rm_out(Val_Rm_exe_out),
+		.status(status_exe),
+		.Dest_out(Dest_exe_out),
+		.WB_EN_out(WB_EN_exe_out), 
+		.MEM_W_EN_out(MEM_W_EN_exe_out), 
+		.MEM_R_EN_out(MEM_R_EN_exe_out),
+		.PC(exe_pc_stage)
 	);
 
-	EXE_Stage_Reg exe_stage_reg (
-		clk,
-		rst,    
-		exe_pc_stage, 
-		exe_pc_stage_reg,		    
+	
+	EXE_Stage_Reg exe_stage_reg(
+		.clk(clk),
+		.rst(rst), 
+		.freeze(freeze), 
+		.flush(flush), 
+		.WB_en_in(WB_EN_exe_out),		    	     
+		.MEM_R_EN_in(MEM_R_EN_exe_out),
+		.MEM_W_EN_in(MEM_W_EN_exe_out),    
+		.PC_in(exe_pc_stage), 
+		.ALU_result_in(ALU_result),
+		.ST_val_in(Val_Rm_exe_out),
+		.Dest_in(Dest_exe_out), 
+		.PC(exe_pc_stage_reg),
+		.WB_en(WB_EN_exe_reg_out), 
+		.MEM_R_EN(MEM_R_EN_exe_reg_out), 
+		.MEM_W_EN(MEM_W_EN_exe_reg_out),
+		.ALU_result(ALU_result_exe_reg_out),
+		.ST_val(Val_Rm_exe_reg_out),
+		.Dest(Dest_exe_reg_out)			    
 	);
+
 
 
 	MEM_Stage mem_stage (
