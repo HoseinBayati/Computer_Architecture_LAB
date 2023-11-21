@@ -349,24 +349,24 @@ module TOP_ARM
 	reg hazard = 1'b0;
 
 	IF_Stage if_stage (
-			.clk(clk), 
-			.rst(rst), 
-			.freeze(hazard), 
-			.Branch_taken(B_reg_out), 
-			.BranchAddr(Br_Addr), 
-			.PC(if_pc_stage), 
-			.Instruction(if_instruction_stage)
+		.clk(clk), 
+		.rst(rst), 
+		.freeze(hazard), 
+		.Branch_taken(B_reg_out), 
+		.BranchAddr(Br_Addr), 
+		.PC(if_pc_stage), 
+		.Instruction(if_instruction_stage)
 	);
 
 	IF_Stage_Reg if_stage_reg (
-			.clk(clk),
-			.rst(rst), 
-			.freeze(hazard), 
-			.flush(B_reg_out), 
-			.PC_in(if_pc_stage), 
-			.Instruction_in(if_instruction_stage), 
-			.PC(if_pc_stage_reg), 
-			.Instruction(if_instruction_stage_reg)
+		.clk(clk),
+		.rst(rst), 
+		.freeze(hazard), 
+		.flush(B_reg_out), 
+		.PC_in(if_pc_stage), 
+		.Instruction_in(if_instruction_stage), 
+		.PC(if_pc_stage_reg), 
+		.Instruction(if_instruction_stage_reg)
 	);
 
 	ID_Stage id_stage (
@@ -439,40 +439,40 @@ module TOP_ARM
 	);
 
 	EXE_Stage exe_stage (
-			clk, 
-			rst, 
-			id_pc_stage_reg,
-			exe_pc_stage
+		clk, 
+		rst, 
+		id_pc_stage_reg,
+		exe_pc_stage
 	);
 
 	EXE_Stage_Reg exe_stage_reg (
-			clk,
-			rst,    
-			exe_pc_stage, 
-			exe_pc_stage_reg,		    
+		clk,
+		rst,    
+		exe_pc_stage, 
+		exe_pc_stage_reg,		    
 	);
 
 
 	MEM_Stage mem_stage (
-			clk, 
-			rst, 
-			exe_pc_stage_reg,
-			mem_pc_stage,
+		clk, 
+		rst, 
+		exe_pc_stage_reg,
+		mem_pc_stage,
 	);
 
 	MEM_Stage_Reg mem_stage_reg (
-			clk, 
-			rst,
-			mem_pc_stage,
-			mem_pc_stage_reg,
+		clk, 
+		rst,
+		mem_pc_stage,
+		mem_pc_stage_reg,
 	);
 
 
 	WB_Stage wb_stage (
-			clk, 
-			rst, 
-			mem_pc_stage_reg, 	 	    
-			wb_pc_stage,
+		clk, 
+		rst, 
+		mem_pc_stage_reg, 	 	    
+		wb_pc_stage,
 	);
 	
 		
