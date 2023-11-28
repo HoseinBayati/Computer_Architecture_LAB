@@ -26,6 +26,7 @@ module ID_Stage (
 	Two_src,
 	PC
 );
+
 	input clk;
 	input rst;
 	input [31:0] Instruction;
@@ -67,11 +68,35 @@ module ID_Stage (
 	assign imm = Instruction[25];
 	assign Two_src = mem_write || (~Instruction[25]);
 
-	Register_File register_file(clk, rst, src1, src2_temp, Dest_wb, Result_WB, writeBackEn, Val_Rn, Val_Rm);
+	Register_File register_file(
+		.clk(clk),
+		.rst(rst),
+		.src1(src1),
+		.src2(src2_temp),
+		.Dest_wb(Dest_wb),
+		.Result_WB(Result_WB),
+		.writeBackEn(writeBackEn),
+		.reg1(Val_Rn),
+		.reg2(Val_Rm)
+	);
 
-	Control_Unit control_unit(Instruction[27:26], Instruction[24:21], Instruction[20], EXE_CMD_temp, mem_read, mem_write, wb_enable, B_temp, S_temp);
+	Control_Unit control_unit(
+		.mode(Instruction[27:26]),
+		.opcode(Instruction[24:21]),
+		.s(Instruction[20]),
+		.EXE_Command(EXE_CMD_temp),
+		.mem_read(mem_read),
+		.mem_write(mem_write),
+		.WB_Enable(wb_enable),
+		.B(B_temp),
+		.Status_Update(S_temp)
+	);
 
-	Condition_Check condition_check(Instruction[31:28], SR, check);
+	Condition_Check condition_check(
+		.conditions(Instruction[31:28]),
+		.stat_regs(SR),
+		.check(check)
+	);
 
 	always @(*) begin
 			if(hazard || !check) begin
@@ -94,4 +119,3 @@ module ID_Stage (
 	end
 
 endmodule
-

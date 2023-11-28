@@ -15,6 +15,7 @@ module MEM_Stage (
     Dest,
     Data_mem_out
 );
+
     input clk, rst;
     input[31:0] PC_in;
     input WB_en_in, Mem_R_en_in, Mem_W_en_in;
@@ -34,7 +35,15 @@ module MEM_Stage (
     assign Mem_R_en = Mem_R_en_in;
     assign Dest = Dest_in;
 
-    Memory dataMemory(clk, rst, Mem_W_en_in, Mem_R_en_in, ALU_result_in, Val_Rm, Data_mem_out);
+    Memory dataMemory(
+        .clk(clk),
+        .rst(rst),
+        .mem_write(Mem_W_en_in),
+        .mem_read(Mem_R_en_in),
+        .address(ALU_result_in),
+        .data(Val_Rm),
+        .res(Data_mem_out)
+    );
 
 endmodule
 

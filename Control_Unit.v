@@ -3,7 +3,8 @@ module Control_Unit (
 	opcode,
 	s,
 	EXE_Command,
-	mem_read, mem_write,
+	mem_read,
+	mem_write,
 	WB_Enable,
 	B,
 	Status_Update

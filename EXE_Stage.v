@@ -56,11 +56,27 @@ module EXE_Stage (
 	assign memory_enable = MEM_R_EN || MEM_W_EN;
 
 
-	Val2_Generator val2gen(Val_Rm, Shift_operand, imm, memory_enable, second_val);
+	Val2_Generator val2gen(
+		.Rm(Val_Rm),
+		.shift_operand(Shift_operand),
+		.imm(imm),
+		.Ld_St(memory_enable),
+		.in2(second_val)
+	);
 
-	ALU alu(Val_Rn, second_val, EXE_CMD, C, ALU_result, status);
+	ALU alu(
+		.in1(Val_Rn),
+		.in2(second_val),
+		.EXE_Command(EXE_CMD),
+		.C(C),
+		.result(ALU_result),
+		.status(status)
+	);
 
-	Adder32bit adder(PC_in, {{{8{Signed_imm_24[23]}}, Signed_imm_24}<<2}, Br_addr);
-
+	Adder32bit adder(
+		.in1(PC_in),
+		.in2({{{8{Signed_imm_24[23]}}, Signed_imm_24}<<2}),
+		.outp(Br_addr)
+	);
 
 endmodule

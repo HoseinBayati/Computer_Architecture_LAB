@@ -18,6 +18,7 @@ module EXE_Stage_Reg (
 	ST_val,
 	Dest
 );
+
 	input clk;
 	input rst;
 	input freeze, flush;
@@ -52,6 +53,5 @@ module EXE_Stage_Reg (
 				Dest <= Dest_in;
 			end 
 	end
-
 
 endmodule

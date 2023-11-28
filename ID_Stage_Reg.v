@@ -37,7 +37,8 @@ module ID_Stage_Reg (
   src_2,
   carry_out
 );
-  input clk;
+
+	input clk;
 	input rst;
 	input flush;
 	input WB_EN_IN, MEM_R_EN_IN, MEM_W_EN_IN;
@@ -126,6 +127,5 @@ module ID_Stage_Reg (
 				end
 		end
   end
-
 
 endmodule

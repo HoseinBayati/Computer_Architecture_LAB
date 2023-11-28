@@ -8,6 +8,7 @@ module hazard_Detection_Unit(
 	With_Two_Source,
 	hazard_Detected
 );
+
 	input [3:0] src1;
 	input [3:0] src2;
 	input [3:0] Exe_Dest;

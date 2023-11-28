@@ -12,6 +12,7 @@ module WB_Stage (
 	WB_en,
 	out
 );
+
 	input clk;
 	input rst;
 	input[31:0] PC_in;
@@ -29,6 +30,5 @@ module WB_Stage (
 	assign WB_en = WB_en_in;
 
 	assign out = MEM_R_en ? MEM_result : ALU_result;
-
 
 endmodule

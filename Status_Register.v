@@ -5,6 +5,7 @@ module Status_Register (
 	status_in,
 	status_out
 );
+
 	input clk;
 	input rst;
 	input s;
@@ -22,4 +23,5 @@ module Status_Register (
 				status_out <= status_out;
 		end    
 	end
+	
 endmodule

@@ -1,9 +1,13 @@
 module Register_File(
-	clk, rst,
-	src1, src2, Dest_wb,
+	clk,
+	rst,
+	src1,
+	src2,
+	Dest_wb,
 	Result_WB,
 	writeBackEn,
-	reg1, reg2
+	reg1,
+	reg2
 );
 
 	input clk, rst;

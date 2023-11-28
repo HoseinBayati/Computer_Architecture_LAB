@@ -8,6 +8,7 @@ module IF_Stage_Reg (
     PC,
     Instruction
 );
+
     input clk, rst, freeze, flush;
     input[31:0] PC_in, Instruction_in;
     output reg [31:0] PC, Instruction;

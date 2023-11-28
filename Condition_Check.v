@@ -3,6 +3,7 @@ module Condition_Check (
 	stat_regs,
 	check
 );
+
 	input [3:0] conditions;
 	input [3:0] stat_regs;
 	output reg check;
