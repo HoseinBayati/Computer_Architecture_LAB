@@ -319,6 +319,7 @@ module TOP_ARM
 	wire[31:0] id_pc_stage, id_pc_stage_reg;
 	wire[31:0] exe_pc_stage, exe_pc_stage_reg;
 	wire[31:0] mem_pc_stage, mem_pc_stage_reg;
+	
 	wire[31:0] wb_pc_stage;
 
 	wire [31:0] Val_Rn, Val_Rm, id_instruction_stage;
@@ -343,10 +344,16 @@ module TOP_ARM
 	wire [31:0] ALU_result, Br_Addr, Val_Rm_exe_out;
 	wire [3:0] status_exe, Dest_exe_out;
 	wire WB_EN_exe_out, MEM_W_EN_exe_out, MEM_R_EN_exe_out, WB_EN_exe_reg_out, MEM_W_EN_exe_reg_out, MEM_R_EN_exe_reg_out;
+	wire WB_EN_mem_out, MEM_R_EN_mem_out, MEM_W_EN_mem_out;
 	wire [31:0] ALU_result_exe_reg_out, Val_Rm_exe_reg_out;
-	wire [3:0] Dest_exe_reg_out;
+	wire [31:0] ALU_result_mem_out;
+	wire [3:0] Dest_mem_out, Dest_exe_reg_out;
 	wire [31:0] Data_mem_out;
 
+	wire WB_EN_mem_reg_out, MEM_R_EN_mem_reg_out;
+	wire [31:0] ALU_result_mem_reg_out, Data_mem_reg_out;
+	wire [3:0] Dest_mem_reg_out;
+	
 	wire [3:0] Dest_wb_out;
 	wire WB_EN_wb_out;
 	wire [31:0] outp;
@@ -469,7 +476,6 @@ module TOP_ARM
 		.PC(exe_pc_stage)
 	);
 
-	
 	EXE_Stage_Reg exe_stage_reg(
 		.clk(clk),
 		.rst(rst), 
@@ -491,22 +497,40 @@ module TOP_ARM
 		.Dest(Dest_exe_reg_out)			    
 	);
 
-
-
 	MEM_Stage mem_stage (
-		clk, 
-		rst, 
-		exe_pc_stage_reg,
-		mem_pc_stage,
+		.clk(clk),
+		.rst(rst),
+		.PC_in(exe_pc_stage_reg),
+		.WB_en_in(WB_EN_exe_reg_out),
+		.Mem_R_en_in(MEM_R_EN_exe_reg_out),
+		.Mem_W_en_in(MEM_W_EN_exe_reg_out),
+		.ALU_result_in(ALU_result_exe_reg_out),
+		.Val_Rm(Val_Rm_exe_reg_out),
+		.Dest_in(Dest_exe_reg_out),
+		.PC(mem_pc_stage),
+		.WB_en(WB_EN_mem_out),
+		.Mem_R_en(MEM_R_EN_mem_out),
+		.ALU_result(ALU_result_mem_out),
+		.Dest(Dest_mem_out),
+		.Data_mem_out(Data_mem_out)
 	);
 
 	MEM_Stage_Reg mem_stage_reg (
-		clk, 
-		rst,
-		mem_pc_stage,
-		mem_pc_stage_reg,
+		.clk(clk),
+		.rst(rst),
+		.WB_en_in(WB_EN_mem_out),
+		.Mem_R_en_in(MEM_R_EN_mem_out),
+		.PC_in(mem_pc_stage),
+		.ALU_result_in(ALU_result_mem_out),
+		.Mem_read_value_in(Data_mem_out),
+		.Dest_in(Dest_mem_out),
+		.PC(mem_pc_stage_reg),
+		.WB_en(WB_EN_mem_reg_out),
+		.Mem_R_en(MEM_R_EN_mem_reg_out),
+		.ALU_result(ALU_result_mem_reg_out),
+		.Mem_read_value(Data_mem_reg_out),
+		.Dest(Dest_mem_reg_out),
 	);
-
 
 	WB_Stage wb_stage (
 		clk, 
