@@ -40,7 +40,7 @@ module ALU(
 
 					end
 					4'b0101: begin
-						{C1, result} = in1 - in2 - C;
+						{C1, result} = in1 + ~in2 + C;
 						V1 = (!in1[31] & in2[31] & result[31]) || (in1[31] & !in2[31] & !result[31]);
 				end
 					4'b0110: begin
