@@ -2,6 +2,7 @@
 *.v.bak
 *.qpf
 *.qsf
+*.qws
 output_files/
 db/
 incremental_db/

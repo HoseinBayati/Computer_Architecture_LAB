@@ -313,7 +313,7 @@ module TOP_ARM
 	assign clk = CLOCK_50;
 	assign rst = SW[17];
 	
-	reg flush = 1'b0, freeze = 1'b0;
+	wire flush, freeze;
 
 	wire[31:0] if_pc_stage, if_instruction_stage, if_pc_stage_reg, if_instruction_stage_reg;
 	wire[31:0] id_pc_stage, id_pc_stage_reg;
@@ -358,7 +358,7 @@ module TOP_ARM
 	wire WB_EN_wb_out;
 	wire [31:0] outp;
 
-	reg hazard = 1'b0;
+	wire hazard;
 
 	IF_Stage if_stage (
 		.clk(clk), 
