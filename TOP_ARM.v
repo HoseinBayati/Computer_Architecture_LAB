@@ -319,12 +319,11 @@ module TOP_ARM
 	wire[31:0] id_pc_stage, id_pc_stage_reg;
 	wire[31:0] exe_pc_stage, exe_pc_stage_reg;
 	wire[31:0] mem_pc_stage, mem_pc_stage_reg;
-	
-	wire[31:0] wb_pc_stage;
+	wire[31:0] wb_pc_stage, wb_pc_stage_reg;
 
-	wire [31:0] Val_Rn, Val_Rm, id_instruction_stage;
-	wire WB_EN, MEM_R_EN, MEM_W_EN, B_out, S_out, imm, Two_src;
-	wire [3:0] SR, EXE_CMD, Dest, src1, src2;
+	wire [31:0] Result_WB, Val_Rn, Val_Rm, id_instruction_stage;
+	wire writeBackEn, WB_EN, MEM_R_EN, MEM_W_EN, B_out, S_out, imm, Two_src;
+	wire [3:0] Dest_wb, SR, EXE_CMD, Dest, src1, src2;
 	wire [11:0] Shift_operand;
 	wire [23:0] Signed_imm_24;
 
@@ -353,12 +352,14 @@ module TOP_ARM
 	wire WB_EN_mem_reg_out, MEM_R_EN_mem_reg_out;
 	wire [31:0] ALU_result_mem_reg_out, Data_mem_reg_out;
 	wire [3:0] Dest_mem_reg_out;
-	
+
 	wire [3:0] Dest_wb_out;
 	wire WB_EN_wb_out;
 	wire [31:0] outp;
 
 	wire hazard;
+
+	wire [1:0] sel_src1, sel_src2;
 
 	IF_Stage if_stage (
 		.clk(clk), 
@@ -465,6 +466,10 @@ module TOP_ARM
 		.Signed_imm_24(Signed_imm_24_out),
 		.C(carry_out),
 		.Dest(Dest_out),
+		.sel_src1(sel_src1),
+		.sel_src2(sel_src2),
+		.MEM_val(ALU_result_mem_out),
+		.WB_val(outp),
 		.ALU_result(ALU_result),
 		.Br_addr(Br_Addr),
 		.Val_Rm_out(Val_Rm_exe_out),
@@ -555,15 +560,29 @@ module TOP_ARM
 		.status_out(SR)
 	);
 
-	hazard_Detection_Unit hazard_unit(
+	Hazard_Detection_Unit hazard_unit(
 		.src1(src1),
 		.src2(src2),
 		.Exe_Dest(Dest_out),
-		.Exe_WB_EN(WB_EN_exe_out),
+		.Exe_WB_EN(WB_EN_reg_id_out),
 		.Mem_Dest(Dest_exe_reg_out),
-		.Mem_WB_EN(WB_EN_mem_out),
+		.Mem_WB_EN(WB_EN_exe_reg_out),
 		.With_Two_Source(Two_src),
+		.Forwarding_Enable(Forwarding_Enable),
+		.EXE_mem_read(MEM_R_EN_exe_out),
 		.hazard_Detected(hazard)
+	);
+
+	Forwrding_Unit forward_unit(
+		.Forwarding_Enable(Forwarding_Enable),
+ 		.src1(src_1_out),
+		.src2(src_2_out),
+  		.MEM_WB_EN(WB_EN_exe_reg_out), 
+		.WB_EN(WB_EN_wb_out), 
+  		.MEM_Dest(Dest_exe_reg_out), 
+		.WB_Dest(Dest_wb_out),
+  		.Sel_Src1(sel_src1), 
+		.Sel_Src2(sel_src2)
 	);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
