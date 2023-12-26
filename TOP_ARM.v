@@ -354,8 +354,10 @@ module TOP_ARM
 	wire [3:0] Dest_mem_reg_out;
 
 	wire [3:0] Dest_wb_out;
-	wire WB_EN_wb_out;
+	wire WB_EN_wb_out, Forwarding_Enable;
 	wire [31:0] outp;
+
+	assign Forwarding_Enable = SW[3];
 
 	wire hazard;
 
