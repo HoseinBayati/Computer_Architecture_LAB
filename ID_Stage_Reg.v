@@ -2,6 +2,7 @@ module ID_Stage_Reg (
   clk,
   rst,
   flush,
+  freeze,
   WB_EN_IN,
   MEM_R_EN_IN,
   MEM_W_EN_IN,
@@ -41,6 +42,7 @@ module ID_Stage_Reg (
 	input clk;
 	input rst;
 	input flush;
+	input freeze;
 	input WB_EN_IN, MEM_R_EN_IN, MEM_W_EN_IN;
 	input B_IN, S_IN;
 	input [3:0] EXE_CMD_IN;
@@ -67,65 +69,80 @@ module ID_Stage_Reg (
 	output reg carry_out;
 
   always @(posedge clk, posedge rst) begin
-      if (rst) begin
-        PC <= 0;
-        Instruction_out <= 0;
-        Dest <= 0;
-        Val_Rn <= 0;
-        Val_Rm <=0;
-        Signed_imm_24 <= 0;
-        Shift_operand <= 0;
-        EXE_CMD <= 0;
-        MEM_R_EN <= 0;
-        MEM_W_EN <= 0;
-        WB_EN <= 0;
-        imm <= 0;
-        B <= 0;
-        S <= 0;
-        src_1 <= 0;
-        src_2 <= 0;
-        carry_out <= 0;
-      end
-      else begin
-			if (flush) begin
-			PC <= 0;
-		   Instruction_out <= 0;
-		   Dest <= 0;
-		   Val_Rn <= 0;
-		   Val_Rm <=0;
-		   Signed_imm_24 <= 0;
-		   Shift_operand <= 0;
-		   EXE_CMD <= 0;
-		   MEM_R_EN <= 0;
-		   MEM_W_EN <= 0;
-		   WB_EN <= 0;
-		   imm <= 0;
-		   B <= 0;
-		   S <= 0;
-		   src_1 <= 0;
-		   src_2 <= 0;
-		   carry_out <= 0;
-			end else
-				begin
-				  PC <= PC_in;
-				  Instruction_out <= Instruction;
-				  Dest <= Dest_IN;
-				  Val_Rn <= Val_Rn_IN;
-				  Val_Rm <=Val_Rm_IN;
-				  Signed_imm_24 <= Signed_imm_24_IN;
-				  Shift_operand <= Shift_operand_IN;
-				  EXE_CMD <= EXE_CMD_IN;
-				  MEM_R_EN <= MEM_R_EN_IN;
-				  MEM_W_EN <= MEM_W_EN_IN;
-				  WB_EN <= WB_EN_IN;
-				  imm <= imm_IN;
-				  B <= B_IN;
-				  S <= S_IN;
-				  src_1 <= src_1_in;
-				  src_2 <= src_2_in;
-				  carry_out <= carry_in;
-				end
-		end
+	if (rst) begin
+		PC <= 0;
+		Instruction_out <= 0;
+		Dest <= 0;
+		Val_Rn <= 0;
+		Val_Rm <=0;
+		Signed_imm_24 <= 0;
+		Shift_operand <= 0;
+		EXE_CMD <= 0;
+		MEM_R_EN <= 0;
+		MEM_W_EN <= 0;
+		WB_EN <= 0;
+		imm <= 0;
+		B <= 0;
+		S <= 0;
+		src_1 <= 0;
+		src_2 <= 0;
+		carry_out <= 0;
+	end else if (flush) begin
+		PC <= 0;
+		Instruction_out <= 0;
+		Dest <= 0;
+		Val_Rn <= 0;
+		Val_Rm <=0;
+		Signed_imm_24 <= 0;
+		Shift_operand <= 0;
+		EXE_CMD <= 0;
+		MEM_R_EN <= 0;
+		MEM_W_EN <= 0;
+		WB_EN <= 0;
+		imm <= 0;
+		B <= 0;
+		S <= 0;
+		src_1 <= 0;
+		src_2 <= 0;
+		carry_out <= 0;
+	end else if(freeze) begin
+		PC <= PC;
+		Instruction_out <= Instruction_out;
+		Dest <= Dest;
+		Val_Rn <= Val_Rn;
+		Val_Rm <= Val_Rm;
+		Signed_imm_24 <= Signed_imm_24;
+		Shift_operand <= Shift_operand;
+		EXE_CMD <= EXE_CMD;
+		MEM_R_EN <= MEM_R_EN;
+		MEM_W_EN <= MEM_W_EN;
+		WB_EN <= WB_EN;
+		imm <= imm;
+		B <= B;
+		S <= S;
+		src_1 <= src_1;
+		src_2 <= src_2;
+		carry_out <= carry_out;
+	end else begin
+		PC <= PC_in;
+		Instruction_out <= Instruction;
+		Dest <= Dest_IN;
+		Val_Rn <= Val_Rn_IN;
+		Val_Rm <=Val_Rm_IN;
+		Signed_imm_24 <= Signed_imm_24_IN;
+		Shift_operand <= Shift_operand_IN;
+		EXE_CMD <= EXE_CMD_IN;
+		MEM_R_EN <= MEM_R_EN_IN;
+		MEM_W_EN <= MEM_W_EN_IN;
+		WB_EN <= WB_EN_IN;
+		imm <= imm_IN;
+		B <= B_IN;
+		S <= S_IN;
+		src_1 <= src_1_in;
+		src_2 <= src_2_in;
+		carry_out <= carry_in;
+	end
+		
   end
 
 endmodule

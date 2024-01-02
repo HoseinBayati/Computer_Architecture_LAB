@@ -308,6 +308,23 @@ module TOP_ARM
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	wire [16:0] _SRAM_ADDR;
+	wire [31:0] _SRAM_DQ;
+
+	SRAM sram(
+		.clk(clk),
+		.rst(rst),
+		.SRAM_WE_N(SRAM_WE_N),
+		.SRAM_ADDR(_SRAM_ADDR),
+		.SRAM_DQ(_SRAM_DQ)
+	);
+
+	assign SRAM_CE_N = 1'b0;
+	assign SRAM_LB_N = 1'b0;
+	assign SRAM_UB_N = 1'b0;
+	assign SRAM_OE_N = 1'b0;
+
+	wire MEM_ready;
 
 	wire clk, rst;
 	assign clk = CLOCK_50;
@@ -366,7 +383,7 @@ module TOP_ARM
 	IF_Stage if_stage (
 		.clk(clk), 
 		.rst(rst), 
-		.freeze(hazard), 
+		.freeze(hazard | ~MEM_ready), 
 		.Branch_taken(B_reg_out), 
 		.BranchAddr(Br_Addr), 
 		.PC(if_pc_stage), 
@@ -376,7 +393,7 @@ module TOP_ARM
 	IF_Stage_Reg if_stage_reg (
 		.clk(clk),
 		.rst(rst), 
-		.freeze(hazard), 
+		.freeze(hazard | ~MEM_ready), 
 		.flush(B_reg_out), 
 		.PC_in(if_pc_stage), 
 		.Instruction_in(if_instruction_stage), 
@@ -420,6 +437,7 @@ module TOP_ARM
 		.WB_EN_IN(WB_EN),
 		.MEM_R_EN_IN(MEM_R_EN),
 		.MEM_W_EN_IN(MEM_W_EN),
+		.freeze(~MEM_ready),
 		.B_IN(B_out), 
 		.S_IN(S_out),
 		.EXE_CMD_IN(EXE_CMD),		  			 
@@ -486,7 +504,7 @@ module TOP_ARM
 	EXE_Stage_Reg exe_stage_reg(
 		.clk(clk),
 		.rst(rst), 
-		.freeze(freeze), 
+		.freeze(~MEM_ready), 
 		.flush(flush), 
 		.WB_en_in(WB_EN_exe_out),		    	     
 		.MEM_R_EN_in(MEM_R_EN_exe_out),
@@ -514,17 +532,22 @@ module TOP_ARM
 		.ALU_result_in(ALU_result_exe_reg_out),
 		.Val_Rm(Val_Rm_exe_reg_out),
 		.Dest_in(Dest_exe_reg_out),
+		.ready(MEM_ready),
+		.SRAM_WE_N(SRAM_WE_N),
+		.SRAM_ADDR(_SRAM_ADDR),
 		.PC(mem_pc_stage),
 		.WB_en(WB_EN_mem_out),
 		.Mem_R_en(MEM_R_EN_mem_out),
 		.ALU_result(ALU_result_mem_out),
 		.Dest(Dest_mem_out),
-		.Data_mem_out(Data_mem_out)
+		.Data_mem_out(Data_mem_out),
+		.SRAM_DQ(_SRAM_DQ)
 	);
 
 	MEM_Stage_Reg mem_stage_reg (
 		.clk(clk),
 		.rst(rst),
+		.freeze(~MEM_ready),
 		.WB_en_in(WB_EN_mem_out),
 		.Mem_R_en_in(MEM_R_EN_mem_out),
 		.PC_in(mem_pc_stage),
@@ -536,7 +559,7 @@ module TOP_ARM
 		.Mem_R_en(MEM_R_EN_mem_reg_out),
 		.ALU_result(ALU_result_mem_reg_out),
 		.Mem_read_value(Data_mem_reg_out),
-		.Dest(Dest_mem_reg_out),
+		.Dest(Dest_mem_reg_out)
 	);
 
 	WB_Stage wb_stage (
